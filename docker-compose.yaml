@@ -1,0 +1,15 @@
+version: "3"
+
+services:
+  app:
+    build: .
+      # context: .
+      # dockerfile: Dockefile.dev
+    # container_name: match-report-frontend-app
+    command: .docker/start.sh
+    volumes:
+      - .:/home/node/app
+    ports:
+      - 3000:3000
+    extra_hosts:
+      - "host.docker.internal:172.17.0.1"
