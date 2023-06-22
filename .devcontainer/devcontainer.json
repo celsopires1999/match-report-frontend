@@ -26,7 +26,8 @@
 		"vscode": {
 			"extensions": [
 				"humao.rest-client",
-				"firsttris.vscode-jest-runner"
+				"firsttris.vscode-jest-runner",
+				"esbenp.prettier-vscode"
 			]
 		}
 	}
