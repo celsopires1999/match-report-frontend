@@ -27,7 +27,8 @@
 			"extensions": [
 				"humao.rest-client",
 				"firsttris.vscode-jest-runner",
-				"esbenp.prettier-vscode"
+				"esbenp.prettier-vscode",
+				"dsznajder.es7-react-js-snippets"
 			]
 		}
 	}
