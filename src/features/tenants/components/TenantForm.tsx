@@ -1,9 +1,9 @@
 import { Box, Button, FormControl, Grid, TextField } from "@mui/material";
-import { Tenant } from "@/types/Tenant";
+import { Tenant, TenantPayload } from "@/types/Tenant";
 import Link from "next/link";
 
 type Props = {
-  tenant: Tenant;
+  tenantPayload: TenantPayload;
   isLoading?: boolean;
   isDisabled?: boolean;
   handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -11,7 +11,7 @@ type Props = {
 };
 
 export function TenantForm({
-  tenant,
+  tenantPayload: tenant,
   isLoading = false,
   isDisabled = false,
   handleChange,

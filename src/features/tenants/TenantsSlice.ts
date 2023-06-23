@@ -1,10 +1,9 @@
-import { Tenant, TenantPayload, Result, Results } from "@/types/Tenant";
+import { TenantPayload, Result, Results } from "@/types/Tenant";
 import { apiSlice } from "@/features/api/apiSlice";
 
 const endpointUrl = "/tenants";
 
-export const initialState: Tenant = {
-    id: "",
+export const initialState: TenantPayload = {
     name: ""
 };
 

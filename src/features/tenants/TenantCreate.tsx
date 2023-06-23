@@ -1,5 +1,5 @@
 import { TenantForm } from "@/features/tenants/components/TenantForm";
-import { Tenant } from "@/types/Tenant";
+import { Tenant, TenantPayload } from "@/types/Tenant";
 import { Box, Paper, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import {
@@ -7,10 +7,14 @@ import {
   useCreateTenantMutation,
 } from "@/features/tenants/TenantsSlice";
 import { useSnackbar } from "notistack";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/dist/query";
+import { SerializedError } from "@reduxjs/toolkit";
 
 export function TenantCreate() {
   const { enqueueSnackbar } = useSnackbar();
   const [createTenant, statusCreateTenant] = useCreateTenantMutation();
+  const [tenantState, setTenantState] =
+    useState<TenantPayload>(tenantInitialState);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -22,11 +26,12 @@ export function TenantCreate() {
     await createTenant(tenantState);
   }
 
-  const [tenantState, setTenantState] = useState<Tenant>(tenantInitialState);
-
   useEffect(() => {
     if (statusCreateTenant.isSuccess) {
       enqueueSnackbar(`Tenant created successfully`, { variant: "success" });
+      console.log(`Tenant created successfully:`, statusCreateTenant.data);
+
+      setTenantState({ name: "" });
     }
     if (statusCreateTenant.error) {
       enqueueSnackbar(`Tenant not created`, { variant: "error" });
@@ -42,11 +47,11 @@ export function TenantCreate() {
           </Box>
         </Box>
         <TenantForm
-          tenant={tenantState}
+          tenantPayload={tenantState}
           handleSubmit={handleSubmit}
           handleChange={handleChange}
-          isLoading={false}
-          isDisabled={false}
+          isLoading={statusCreateTenant.isLoading}
+          isDisabled={statusCreateTenant.isLoading}
         />
       </Paper>
     </Box>
