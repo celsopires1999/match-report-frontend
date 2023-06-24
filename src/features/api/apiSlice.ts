@@ -1,7 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-export const baseUrl = `http://lb-sumula-207865420.us-east-1.elb.amazonaws.com`;
-// export const baseUrl = `http://localhost:8081`;
+export const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 export const apiSlice = createApi({
   reducerPath: "api",
   tagTypes: ["Tenants"],
