@@ -1,0 +1,16 @@
+FROM node:19.8.1-slim
+
+USER node
+
+RUN mkdir -p /home/node/app
+
+WORKDIR /home/node/app
+
+COPY --chown=node:node . .
+
+RUN npm install
+
+# The script build uses .env.production.
+RUN npm run build
+
+CMD [ "npm", "run", "start"] 

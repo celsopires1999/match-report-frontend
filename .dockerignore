@@ -1,0 +1,11 @@
+.devcontainer/
+.docker/
+.vscode/
+.next/
+node_modules/
+.git/
+.gitignore
+.env.development
+docker-compose.yaml
+Dockerfile.dev
+Dockerfile.prod

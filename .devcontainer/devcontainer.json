@@ -28,7 +28,9 @@
 				"humao.rest-client",
 				"firsttris.vscode-jest-runner",
 				"esbenp.prettier-vscode",
-				"dsznajder.es7-react-js-snippets"
+				"dsznajder.es7-react-js-snippets",
+				"eamodio.gitlens",
+				"Prisma.prisma"
 			]
 		}
 	}

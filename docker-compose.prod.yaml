@@ -1,0 +1,18 @@
+version: "3"
+
+services:
+  app_prod:
+    # image: celsopires/matchreport-frontend:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    container_name: match-report-frontend-app_prod
+    volumes:
+      - .:/home/node/app
+      - /home/node/app/.next
+      - /home/node/app/public
+      - /home/node/app/node_modules
+    ports:
+      - 3000:3000
+    extra_hosts:
+      - "host.docker.internal:172.17.0.1"

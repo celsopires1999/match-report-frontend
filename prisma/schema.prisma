@@ -1,0 +1,91 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["extendedWhereUnique"]
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model TenantModel {
+  id           String            @id @map("_id")
+  name         String            @unique
+  Players      PlayerModel[]
+  Teams        TeamModel[]
+  created_at   DateTime          @default(now())
+  updated_at   DateTime          @updatedAt
+  TeamsPlayers TeamPlayerModel[]
+
+  @@map("tenants")
+}
+
+model PlayerModel {
+  id         String            @id @map("_id")
+  Tenant     TenantModel       @relation(fields: [tenant_id], references: [id])
+  tenant_id  String
+  name       String
+  Teams      TeamPlayerModel[]
+  created_at DateTime          @default(now())
+  updated_at DateTime          @updatedAt
+
+  @@unique([tenant_id, name])
+  @@map("players")
+}
+
+model TeamModel {
+  id         String            @id @map("_id")
+  Tenant     TenantModel       @relation(fields: [tenant_id], references: [id])
+  tenant_id  String
+  name       String
+  Players    TeamPlayerModel[]
+  created_at DateTime          @default(now())
+  updated_at DateTime          @updatedAt
+
+  @@unique([tenant_id, name])
+  @@map("teams")
+}
+
+model TeamPlayerModel {
+  id         String      @id @map("_id")
+  Tenant     TenantModel @relation(fields: [tenant_id], references: [id])
+  tenant_id  String
+  Player     PlayerModel @relation(fields: [player_id], references: [id])
+  player_id  String
+  Team       TeamModel   @relation(fields: [team_id], references: [id])
+  team_id    String
+  created_at DateTime    @default(now())
+  updated_at DateTime    @updatedAt
+
+  @@unique([tenant_id, team_id, player_id])
+  @@map("teams_players")
+}
+
+model GameModel {
+  id        String   @id @map("_id")
+  tenant_id String
+  date      DateTime
+  place     String?
+  home      Team
+  away      Team
+
+  @@map("games")
+}
+
+type Team {
+  id      String
+  name    String
+  gols    Int
+  assists Int
+  players Player[]
+}
+
+type Player {
+  id      String
+  name    String
+  gols    Int
+  assists Int
+}

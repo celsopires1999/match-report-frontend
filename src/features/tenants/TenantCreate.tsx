@@ -24,6 +24,7 @@ export function TenantCreate() {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     await createTenant(tenantState);
+    console.log("NEXT_PUBLIC_BASE_URL: ", process.env.NEXT_PUBLIC_BASE_URL);
   }
 
   useEffect(() => {
@@ -43,7 +44,7 @@ export function TenantCreate() {
       <Paper>
         <Box p={2}>
           <Box mb={2}>
-            <Typography variant="h4">Create Tenant</Typography>
+            <Typography variant="h4">Create Tenant v0.3</Typography>
           </Box>
         </Box>
         <TenantForm
