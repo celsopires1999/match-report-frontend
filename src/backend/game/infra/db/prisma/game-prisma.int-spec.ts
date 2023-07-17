@@ -114,21 +114,21 @@ describe("Game Integration Test", () => {
     expect(JSON.stringify(foundGames)).toEqual(JSON.stringify(games));
   });
 
-  // it("should list all games", async () => {
-  //   const games = [
-  //     new Game({ name: "Liga One", tenant_id: new TenantId(tenant.id) }),
-  //     new Game({ name: "Liga Two", tenant_id: new TenantId(tenant.id) }),
-  //   ];
-  //   await repository.bulkInsert(games);
-  //   const foundGames = await repository.listAll(tenant.id);
+  it("should list all games", async () => {
+    const games = theGames(tenant.entityId);
+    await repository.bulkInsert(games);
+    const foundGames = await repository.listAll(tenant.id);
 
-  //   for (let n = 0; n > games.length; n++) {
-  //     expect(foundGames[n].id).toBe(games[n].id);
-  //     expect(foundGames[n].name).toBe(games[n].name);
-  //     expect(foundGames[n].created_at).toBeInstanceOf(Date);
-  //     expect(foundGames[n].updated_at).toBeInstanceOf(Date);
-  //   }
-  // });
+    for (let n = 0; n > games.length; n++) {
+      expect(foundGames[n].id).toBe(games[n].id);
+      expect(foundGames[n].place).toBe(games[n].place);
+      expect(foundGames[n].date).toEqual(games[n].date);
+      expect(foundGames[n].home.toJSON()).toEqual(games[n].home.toJSON());
+      expect(foundGames[n].away.toJSON()).toEqual(games[n].away.toJSON());
+      expect(foundGames[n].created_at).toBeInstanceOf(Date);
+      expect(foundGames[n].updated_at).toBeInstanceOf(Date);
+    }
+  });
 });
 
 function aGameProps(tenant: Tenant): GameProps {

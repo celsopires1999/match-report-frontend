@@ -3,7 +3,7 @@ import { LoadEntityError } from "@/backend/@seedwork/domain/errors/load-entity.e
 import { NotFoundError } from "@/backend/@seedwork/domain/errors/not-found.error";
 import { EntityValidationError } from "@/backend/@seedwork/domain/errors/validation-error";
 import { Game, GameId } from "@/backend/game/domain/entities/game";
-// import { GameQuery } from "@/backend/game/domain/entities/game-query";
+import { GameQuery } from "@/backend/game/domain/entities/game-query";
 import { GameRepository } from "@/backend/game/domain/repository/game.repository";
 import { GameTeam } from "@/backend/game/domain/value-objects/game-team.vo";
 import { prisma } from "@/backend/prisma/prisma";
@@ -130,16 +130,16 @@ export namespace GamePrisma {
       }
     }
 
-    // async listAll(tenant_id: string | TenantId): Promise<GameQuery[]> {
-    //   let _tenant_id = `${tenant_id}`;
-    //   if (typeof tenant_id !== "string") {
-    //     _tenant_id = tenant_id.value;
-    //   }
-    //   const models = await prisma.gameModel.findMany({
-    //     where: { tenant_id: _tenant_id },
-    //   });
-    //   return models.map((m) => GameQueryModelMapper.toEntity(m));
-    // }
+    async listAll(tenant_id: string | TenantId): Promise<GameQuery[]> {
+      let _tenant_id = `${tenant_id}`;
+      if (typeof tenant_id !== "string") {
+        _tenant_id = tenant_id.value;
+      }
+      const models = await prisma.gameModel.findMany({
+        where: { tenant_id: _tenant_id },
+      });
+      return models.map((m) => GameQueryModelMapper.toEntity(m));
+    }
 
     private checkNotFoundError(msg: string, e: unknown) {
       if (
@@ -185,21 +185,39 @@ export namespace GamePrisma {
     }
   }
 
-  //   export class GameQueryModelMapper {
-  //     static toEntity(model: GameModel) {
-  //       const { id, name, tenant_id, created_at, updated_at } = model;
-  //       try {
-  //         return new GameQuery(
-  //           { name, tenant_id: new TenantId(tenant_id), created_at, updated_at },
-  //           new GameId(id)
-  //         );
-  //       } catch (e) {
-  //         if (e instanceof EntityValidationError) {
-  //           throw new LoadEntityError(e.error);
-  //         }
-
-  //         throw e;
-  //       }
-  //     }
-  //   }
+  export class GameQueryModelMapper {
+    static toEntity(model: GameModel) {
+      const {
+        id,
+        tenant_id,
+        date,
+        place,
+        home: homeJSON,
+        away: awayJSON,
+        created_at,
+        updated_at,
+      } = model;
+      try {
+        const home = GameTeam.createFromJSON(homeJSON);
+        const away = GameTeam.createFromJSON(awayJSON);
+        return new GameQuery(
+          {
+            tenant_id: new TenantId(tenant_id),
+            date,
+            place,
+            home,
+            away,
+            created_at,
+            updated_at,
+          },
+          new GameId(id)
+        );
+      } catch (e) {
+        if (e instanceof EntityValidationError) {
+          throw new LoadEntityError(e.error);
+        }
+        throw e;
+      }
+    }
+  }
 }

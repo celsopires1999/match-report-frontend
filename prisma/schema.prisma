@@ -65,12 +65,14 @@ model TeamPlayerModel {
 }
 
 model GameModel {
-  id        String   @id @map("_id")
-  tenant_id String
-  date      DateTime
-  place     String?
-  home      Team
-  away      Team
+  id         String   @id @map("_id")
+  tenant_id  String
+  date       DateTime
+  place      String?
+  home       Team
+  away       Team
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
   @@map("games")
 }
