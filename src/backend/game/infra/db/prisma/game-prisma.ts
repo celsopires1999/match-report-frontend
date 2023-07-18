@@ -55,7 +55,7 @@ export namespace GamePrisma {
       const _id = typeof id === "string" ? id : id.value;
 
       const model = await this._get(_tenant_id, _id);
-      return GameModelMapper.toEntity(model);
+      return GameModelMapper.toEntity("Game", model);
     }
 
     private async _get(tenant_id: string, id: string) {
@@ -93,7 +93,7 @@ export namespace GamePrisma {
       const models = await prisma.gameModel.findMany({
         where: { tenant_id: _tenant_id },
       });
-      return models.map((m) => GameModelMapper.toEntity(m));
+      return models.map((m) => GameModelMapper.toEntity("Game", m));
     }
 
     async update(tenant_id: string | TenantId, entity: Game): Promise<void> {
@@ -138,7 +138,7 @@ export namespace GamePrisma {
       const models = await prisma.gameModel.findMany({
         where: { tenant_id: _tenant_id },
       });
-      return models.map((m) => GameQueryModelMapper.toEntity(m));
+      return models.map((m) => GameModelMapper.toEntity("GameQuery", m));
     }
 
     private checkNotFoundError(msg: string, e: unknown) {
@@ -154,39 +154,10 @@ export namespace GamePrisma {
   }
 
   export class GameModelMapper {
-    static toEntity(model: GameModel) {
-      const {
-        id,
-        tenant_id,
-        date,
-        place,
-        home: homeJSON,
-        away: awayJSON,
-      } = model;
-      try {
-        const home = GameTeam.createFromJSON(homeJSON);
-        const away = GameTeam.createFromJSON(awayJSON);
-        return new Game(
-          {
-            tenant_id: new TenantId(tenant_id),
-            date,
-            place,
-            home,
-            away,
-          },
-          new GameId(id)
-        );
-      } catch (e) {
-        if (e instanceof EntityValidationError) {
-          throw new LoadEntityError(e.error);
-        }
-        throw e;
-      }
-    }
-  }
-
-  export class GameQueryModelMapper {
-    static toEntity(model: GameModel) {
+    static toEntity<T extends Game | GameQuery>(
+      option: "Game" | "GameQuery",
+      model: GameModel
+    ): T {
       const {
         id,
         tenant_id,
@@ -197,21 +168,24 @@ export namespace GamePrisma {
         created_at,
         updated_at,
       } = model;
+
       try {
         const home = GameTeam.createFromJSON(homeJSON);
         const away = GameTeam.createFromJSON(awayJSON);
+        const commonProperties = {
+          tenant_id: new TenantId(tenant_id),
+          date,
+          place,
+          home,
+          away,
+        };
+        if (option === "Game") {
+          return new Game(commonProperties, new GameId(id)) as T;
+        }
         return new GameQuery(
-          {
-            tenant_id: new TenantId(tenant_id),
-            date,
-            place,
-            home,
-            away,
-            created_at,
-            updated_at,
-          },
+          { ...commonProperties, created_at, updated_at },
           new GameId(id)
-        );
+        ) as T;
       } catch (e) {
         if (e instanceof EntityValidationError) {
           throw new LoadEntityError(e.error);
