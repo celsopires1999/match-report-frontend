@@ -1,7 +1,6 @@
 import { ValueObject } from "@/backend/@seedwork/domain/value-objects/value-object";
 import { InvalidGameTeamError } from "../errors/game-team.error";
 import { GamePlayer, GamePlayerJson } from "./game-player.vo";
-import { TeamId } from "@/backend/team/domain/entities/team";
 
 export type GameTeamProps = {
   id: string;
@@ -21,7 +20,17 @@ export type GameTeamJson = {
 
 export class GameTeam extends ValueObject<GameTeamProps> {
   private constructor(value: GameTeamProps) {
-    super(value);
+    if (Array.isArray(value.players)) {
+      const _value = { ...value };
+      const filteredPlayers = new Map<string, GamePlayer>();
+      _value.players.forEach((p) => filteredPlayers.set(p.value.id, p));
+      _value.players = [];
+      filteredPlayers.forEach((p) => _value.players.push(p));
+      super(_value);
+    } else {
+      super(value);
+    }
+
     this.validate();
   }
 
