@@ -1,5 +1,5 @@
 import { TenantId } from "@/backend/tenant/domain/entities/tenant";
-import { Game, GameProps } from "./game";
+import { Game, GameId, GameProps } from "./game";
 import { UniqueEntityId } from "@/backend/@seedwork/domain/value-objects/unique-entity-id.vo";
 import { GamePlayer } from "../value-objects/game-player.vo";
 import { GameTeam } from "../value-objects/game-team.vo";
@@ -160,6 +160,56 @@ describe("Game Integration Tests", () => {
       expect(game.place).toEqual(place);
       expect(game.home).toEqual(home);
       expect(game.away).toEqual(away);
+    });
+  });
+
+  describe("updateGol method", () => {
+    it("should update gols and assists", () => {
+      const tenant_id = new TenantId();
+      const game = new Game(
+        {
+          tenant_id,
+          date: new Date(),
+          place: "Place of the Game",
+          home: GameTeam.createFromJSON({
+            id: "111",
+            name: "Team 111",
+            gols: 2,
+            assists: 1,
+            players: [
+              { id: "11", name: "Player 11", gols: 3, assists: 2 },
+              { id: "12", name: "Player 12", gols: 2, assists: 3 },
+            ],
+          }),
+          away: GameTeam.createFromJSON({
+            id: "222",
+            name: "Team 222",
+            gols: 2,
+            assists: 1,
+            players: [
+              { id: "13", name: "Player 13", gols: 2, assists: 3 },
+              { id: "14", name: "Player 14", gols: 3, assists: 2 },
+            ],
+          }),
+        },
+        new GameId("5ed7b2de-2a7d-4d10-9ee3-17e335a4e1c8")
+      );
+
+      game.updateGol("111", "12", "11");
+      expect(game.home.value.gols).toBe(3);
+      expect(game.home.value.assists).toBe(2);
+      expect(game.home.value.players[0].value.gols).toBe(3);
+      expect(game.home.value.players[0].value.assists).toBe(3);
+      expect(game.home.value.players[1].value.gols).toBe(3);
+      expect(game.home.value.players[1].value.assists).toBe(3);
+
+      game.updateGol("222", "13", "14");
+      expect(game.away.value.gols).toBe(3);
+      expect(game.away.value.assists).toBe(2);
+      expect(game.away.value.players[0].value.gols).toBe(3);
+      expect(game.away.value.players[0].value.assists).toBe(3);
+      expect(game.away.value.players[1].value.gols).toBe(3);
+      expect(game.away.value.players[1].value.assists).toBe(3);
     });
   });
 
