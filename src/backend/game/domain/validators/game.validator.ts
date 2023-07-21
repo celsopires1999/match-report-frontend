@@ -11,6 +11,7 @@ import {
 import { GameProps } from "../entities/game";
 import { TenantId } from "@/backend/tenant/domain/entities/tenant";
 import { GameTeam } from "../value-objects/game-team.vo";
+import { DiffValue } from "@/backend/@seedwork/domain/validators/rules/diff-value.rule";
 
 export class GameRules {
   @IsNotEmptyObject()
@@ -31,6 +32,7 @@ export class GameRules {
   @IsNotEmpty()
   home!: GameTeam[];
 
+  @DiffValue("home", "id")
   @IsNotEmptyObject()
   @IsNotEmpty()
   away!: GameTeam[];

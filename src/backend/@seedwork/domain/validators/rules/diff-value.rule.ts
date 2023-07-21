@@ -6,7 +6,7 @@ import {
   ValidatorConstraintInterface,
 } from "class-validator";
 
-export function Different(
+export function DiffValue(
   property: string,
   attribute: string,
   validationOptions?: ValidationOptions
@@ -17,20 +17,20 @@ export function Different(
       propertyName,
       options: validationOptions,
       constraints: [property, attribute],
-      validator: DifferentConstraint,
+      validator: DiffValueConstraint,
     });
   };
 }
 
-@ValidatorConstraint({ name: "Different" })
-export class DifferentConstraint implements ValidatorConstraintInterface {
+@ValidatorConstraint({ name: "DiffValue" })
+export class DiffValueConstraint implements ValidatorConstraintInterface {
   validate(value: any, args: ValidationArguments) {
     const [relatedPropertyName, attribute] = args.constraints;
     const relatedValue = (args.object as any)[relatedPropertyName];
 
-    if (!value || !relatedValue) return true;
+    if (!value?.value || !relatedValue?.value) return true;
 
-    return value[attribute] !== relatedValue[attribute];
+    return value.value[attribute] !== relatedValue.value[attribute];
   }
 
   defaultMessage(args: ValidationArguments) {
